@@ -1,5 +1,8 @@
 import os
 import json
+import pytz
+import pprint
+import base64
 from datetime import datetime, timedelta
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
@@ -8,9 +11,6 @@ from googleapiclient.errors import HttpError
 from googleapiclient.errors import HttpError as RequestError
 from google.auth.transport.requests import Request
 import mysql.connector
-import pytz
-import pprint
-import base64
 from email import message_from_bytes
 from datetime import datetime
 
@@ -54,6 +54,7 @@ def mark_as_read(service, message_id):
     except Exception as e:
         print(f'An error occurred: {e}')
 
+# create a check list for emails from the Inbox
 def check_email_rules(email_data, rules):
     for rule in rules:
         if rule['predicate'] == 'All':
@@ -82,11 +83,6 @@ def check_email_rules(email_data, rules):
             if condition_met:
                 return True
     return False
-
-
-# Fetch a list of emails from the Inbox
-#results = service.users().messages().list(userId='me', q='in:inbox').execute()
-#messages = results.get('messages', [])
 
 
 # Store these emails in a database table
@@ -133,11 +129,6 @@ for msg in messages:
             except Exception as e:
                 print(e)
 
-
-
-
-
-       # Insert email data into a database table
     # Insert email data into a database table
     if 'from' in email_data:
         from_email = email_data['from']
@@ -156,18 +147,13 @@ for msg in messages:
     else:
         received = ''
     
-
+    #  create a query for inserting email details into MySQL table
     insert_query = f"INSERT INTO emails (from_email, to_email, subject, received) VALUES ('{email_data['from']}', '{email_data['to']}', '{email_data['subject']}', '{email_data['received']}')"
     cur.execute(insert_query)
     conn.commit()
 
     # Mark the email as read
     mark_as_read(service, msg['id'])
-
-
-    #Fetch a list of up to 100 emails from the Inbox
-    #results = service.users().messages().list(userId='me').execute()
-    #messages = results.get('messages', [])
 
 # Close the database connection
 conn.close()
