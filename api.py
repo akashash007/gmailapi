@@ -3,16 +3,16 @@ import json
 import pytz
 import pprint
 import base64
+import mysql.connector
+from datetime import datetime
+from email import message_from_bytes
 from datetime import datetime, timedelta
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from googleapiclient.errors import HttpError as RequestError
 from google.auth.transport.requests import Request
-import mysql.connector
-from email import message_from_bytes
-from datetime import datetime
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.errors import HttpError as RequestError
 
 # Set up the Gmail API client
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
